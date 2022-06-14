@@ -59,8 +59,9 @@ public class MainActivity extends AppCompatActivity {
             public void done(List<Post> objects, com.parse.ParseException e) {
                 if (e == null) {
                     // Access the array of results here
+                    Log.i(TAG, "posts.toString()");
                     posts.addAll(objects);
-                    Log.i(TAG, posts.toString());
+
                 } else {
                     Log.e("item", "Error: " + e.getMessage());
                 }
