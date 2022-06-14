@@ -29,8 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        ParseUser.getCurrentUser();
         setContentView(R.layout.activity_login);
 
         //Login persistance

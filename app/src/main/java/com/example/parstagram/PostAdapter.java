@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.parse.ParseUser;
 import com.parse.ui.widget.ParseImageView;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
 
     public PostAdapter (Context context, List<Post> posts){
-        mPosts = posts;
+        this.mPosts = posts;
         this.context = context;
     }
 
@@ -63,7 +64,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
         public TextView tvDescription;
         public TextView tvUsername;
-        public ParseImageView pivPostImage;
+        public ImageView ivPostImage;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -71,18 +72,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvUsername = itemView.findViewById(R.id.tvUsername);
-            pivPostImage = itemView.findViewById(R.id.pivPostImage);
+            ivPostImage = itemView.findViewById(R.id.ivPostImage);
 
         }
 
         public void bind(Post post) {
-            Log.i(TAG, post.toString());
             tvDescription.setText(post.getDescription());
+            //ParseUser user = post.getUser();
+            //String name = post.getUser().getUsername();
+            //Log.i(TAG,name );
             tvUsername.setText(post.getUser().getUsername());
+
+
             //Parse Image View Methods
             if (post.getImage() != null) {
-                pivPostImage.setParseFile(post.getImage());
-                pivPostImage.loadInBackground();
+                Glide.with(context).load(post.getImage().getUrl()).into(ivPostImage);
             }
         }
     }

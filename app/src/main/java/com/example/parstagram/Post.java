@@ -12,27 +12,9 @@ public class Post extends ParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_USER = "user";
 
-    public Post (){
-        super();
-    }
-
-    public Post (String description, ParseUser user, ParseFile image){
-        super();
-        setImage(image);
-        setUser();
-        setDescription(description);
-    }
-
-    public Post (String description, ParseUser user){
-        super();
-        setUser();
-        setDescription(description);
-    }
-
-
 
     public void setDescription(String description){
-        put("description", description);
+        put(KEY_DESCRIPTION, description);
     }
 
     public String getDescription(){
@@ -40,19 +22,18 @@ public class Post extends ParseObject {
     }
 
     public void setUser(){
-        put("user", ParseUser.getCurrentUser());
+        put(KEY_USER, ParseUser.getCurrentUser());
     }
 
     public ParseUser getUser(){
         return getParseUser(KEY_USER);
     }
 
-
     public ParseFile getImage() {
         return getParseFile(KEY_IMAGE);
     }
 
     public void setImage(ParseFile parseFile) {
-        put("image", parseFile);
+        put(KEY_IMAGE, parseFile);
     }
 }
