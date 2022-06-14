@@ -1,6 +1,8 @@
 package com.example.parstagram;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,17 +26,27 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     Button btLogout;
     ParseUser user;
-    ArrayList<Post> posts;
+    private ArrayList<Post> mPosts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Lookup the recyclerview in activity layout
+        RecyclerView rvFeed = (RecyclerView) findViewById(R.id.rvFeed);
+
+        // Create adapter passing in the sample user data
+        PostAdapter adapter = new PostAdapter(this, mPosts);
+        // Attach the adapter to the recyclerview to populate items
+        rvFeed.setAdapter(adapter);
+        // Set layout manager to position the items
+        rvFeed.setLayoutManager(new LinearLayoutManager(this));
+        // That's all!
         user = ParseUser.getCurrentUser();
         btLogout = findViewById(R.id.btLogout);
         queryPosts();
 
-
+        //Logout Button onClick
         btLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
 
 
 
@@ -59,9 +73,8 @@ public class MainActivity extends AppCompatActivity {
             public void done(List<Post> objects, com.parse.ParseException e) {
                 if (e == null) {
                     // Access the array of results here
-                    Log.i(TAG, "posts.toString()");
-                    posts.addAll(objects);
-
+                    mPosts.addAll(objects);
+                    Log.i(TAG, mPosts.toString());
                 } else {
                     Log.e("item", "Error: " + e.getMessage());
                 }
