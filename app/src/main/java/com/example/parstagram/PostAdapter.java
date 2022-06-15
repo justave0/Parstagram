@@ -89,5 +89,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                 Glide.with(context).load(post.getImage().getUrl()).into(ivPostImage);
             }
         }
+
+    }
+    public void updateAdapter(ArrayList<Post> mDataList) {
+        this.mPosts = mDataList;
+        notifyDataSetChanged();
     }
 }

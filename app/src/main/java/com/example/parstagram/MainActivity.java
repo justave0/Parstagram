@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.parstagram.Fragments.FeedFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.parse.FindCallback;
@@ -43,23 +44,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Lookup the recyclerview in activity layout
-
         final FragmentManager fragmentManager = getSupportFragmentManager();
-        RecyclerView rvFeed = (RecyclerView) findViewById(R.id.rvFeed);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         //fragment
         final Fragment feed_fragment = new FeedFragment();
-        final Fragment create_fragment = new CreateFragment();
-
-        // Create adapter passing in the sample user data
-        adapter = new PostAdapter(this, mPosts);
-        // Attach the adapter to the recyclerview to populate items
-        rvFeed.setAdapter(adapter);
-        // Set layout manager to position the items
-        rvFeed.setLayoutManager(new LinearLayoutManager(this));
-        // That's all!
+        //final Fragment create_fragment = new CreateFragment();
 
 
         user = ParseUser.getCurrentUser();
@@ -70,20 +60,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
+                String tag;
                 switch (item.getItemId()) {
                     case R.id.action_feed:
                         fragment = feed_fragment;
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.flFeed, fragment);
-                        ft.commit();
-                    case R.id.action_create:
-                        // do something here
-                        fragment = create_fragment;
-                        break;
+                        tag = "FEED";
+
+//                    case R.id.action_create:
+//                        // do something here
+//                        fragment = create_fragment;
+//                        break;
                     default:
                         fragment = feed_fragment;
+                        tag = "FEED";
                 }
-                fragmentManager.beginTransaction().replace(R.id.rlContainer, fragment).commit();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.flMain, fragment, tag);
+                ft.commit();
+
                 return true;
             }
         });
@@ -128,12 +122,13 @@ public class MainActivity extends AppCompatActivity {
                 if (e == null) {
                     // Access the array of results here
                     mPosts.addAll(objects);
+                    FeedFragment fragmentFeed = (FeedFragment)
+                            getSupportFragmentManager().findFragmentByTag("FEED");
+                    fragmentFeed.notifyAdapter(mPosts);
                     Log.i(TAG, mPosts.toString());
-
                 } else {
                     Log.e("item", "Error: " + e.getMessage());
                 }
-                adapter.notifyDataSetChanged();
             }
 
         });

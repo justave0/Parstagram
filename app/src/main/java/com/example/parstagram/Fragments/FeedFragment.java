@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parstagram.Post;
 import com.example.parstagram.PostAdapter;
@@ -19,6 +22,8 @@ import java.util.ArrayList;
 public class FeedFragment extends Fragment {
     PostAdapter adapter;
     FragmentActivity listener;
+    Context context;
+    private ArrayList<Post> posts = new ArrayList<>();
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -26,6 +31,7 @@ public class FeedFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof Activity){
             this.listener = (FragmentActivity) context;
         }
@@ -37,15 +43,14 @@ public class FeedFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ArrayList<Post> things = new ArrayList<Post>();
-        adapter = new PostAdapter(getActivity(), things);
+        adapter = new PostAdapter(getActivity(), posts);
     }
 
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_some, parent, false);
+        return inflater.inflate(R.layout.fragment_feed, parent, false);
     }
 
     // This event is triggered soon after onCreateView().
@@ -54,8 +59,9 @@ public class FeedFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ListView lv = (ListView) view.findViewById(R.id.lvSome);
-        lv.setAdapter(adapter);
+        RecyclerView rvFeed = (RecyclerView) view.findViewById(R.id.rvFeed);
+        rvFeed.setAdapter(adapter);
+        rvFeed.setLayoutManager(new LinearLayoutManager(context));
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -72,5 +78,11 @@ public class FeedFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    //Updates the adapter
+    public void notifyAdapter (ArrayList<Post> post){
+        posts = post;
+        adapter.updateAdapter(posts);
     }
 }
