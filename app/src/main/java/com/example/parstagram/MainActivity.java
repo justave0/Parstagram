@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.parstagram.Fragments.CreateFragment;
 import com.example.parstagram.Fragments.FeedFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Post> mPosts = new ArrayList<>();
     PostAdapter adapter;
 
+    Fragment feed_fragment;
+    Fragment create_fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +52,14 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         //fragment
-        final Fragment feed_fragment = new FeedFragment();
-        //final Fragment create_fragment = new CreateFragment();
+        feed_fragment = new FeedFragment();
+        create_fragment = new CreateFragment();
 
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.flMain, feed_fragment, FeedFragment.class.getSimpleName());
+        ft.commit();
 
         user = ParseUser.getCurrentUser();
-        queryPosts();
 
         //Fragment Manager
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
@@ -62,18 +68,21 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment;
                 String tag;
                 switch (item.getItemId()) {
+                    case R.id.action_create:
+                        fragment = create_fragment;
+                        tag = CreateFragment.class.getSimpleName();
+                        break;
+
                     case R.id.action_feed:
                         fragment = feed_fragment;
-                        tag = "FEED";
+                        tag = FeedFragment.class.getSimpleName();
+                        break;
 
-//                    case R.id.action_create:
-//                        // do something here
-//                        fragment = create_fragment;
-//                        break;
                     default:
-                        fragment = feed_fragment;
-                        tag = "FEED";
+                        fragment = new Fragment();
+                        tag = "rubbish";
                 }
+
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.flMain, fragment, tag);
                 ft.commit();
@@ -94,10 +103,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void onPostAction(MenuItem mi) {
-        Log.i(TAG, "Click post");
-
-    }
 
     public void onLogoutAction(MenuItem mi){
         ParseUser.logOut();
@@ -109,31 +114,5 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void queryPosts(){
-        // Specify which class to query
-        //Post post = new Post();
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.include(Post.KEY_USER);
-        Log.i(TAG, query.toString());
-        // Specify the object id
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> objects, com.parse.ParseException e) {
-                if (e == null) {
-                    // Access the array of results here
-                    mPosts.addAll(objects);
-                    FeedFragment fragmentFeed = (FeedFragment)
-                            getSupportFragmentManager().findFragmentByTag("FEED");
-                    fragmentFeed.notifyAdapter(mPosts);
-                    Log.i(TAG, mPosts.toString());
-                } else {
-                    Log.e("item", "Error: " + e.getMessage());
-                }
-            }
 
-        });
-
-
-
-    }
 }

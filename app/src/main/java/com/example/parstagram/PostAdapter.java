@@ -26,6 +26,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     private String TAG = "PostAdapter";
 
 
+
     public PostAdapter (Context context, List<Post> posts){
         this.mPosts = posts;
         this.context = context;

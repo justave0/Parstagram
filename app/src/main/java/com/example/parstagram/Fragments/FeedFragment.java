@@ -3,6 +3,7 @@ package com.example.parstagram.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.parstagram.Post;
 import com.example.parstagram.PostAdapter;
 import com.example.parstagram.R;
+import com.parse.FindCallback;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FeedFragment extends Fragment {
     PostAdapter adapter;
@@ -62,6 +66,7 @@ public class FeedFragment extends Fragment {
         RecyclerView rvFeed = (RecyclerView) view.findViewById(R.id.rvFeed);
         rvFeed.setAdapter(adapter);
         rvFeed.setLayoutManager(new LinearLayoutManager(context));
+        queryPosts();
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -84,5 +89,32 @@ public class FeedFragment extends Fragment {
     public void notifyAdapter (ArrayList<Post> post){
         posts = post;
         adapter.updateAdapter(posts);
+    }
+
+    public void queryPosts(){
+        // Specify which class to query
+        //Post post = new Post();
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.include(Post.KEY_USER);
+        query.addDescendingOrder("createdAt");
+        //Log.i(TAG, query.toString());
+        // Specify the object id
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, com.parse.ParseException e) {
+                if (e == null) {
+                    // Access the array of results here
+                    posts.addAll(objects);
+                    notifyAdapter(posts);
+                    //Log.i(TAG, mPosts.toString());
+                } else {
+                    Log.e("item", "Error: " + e.getMessage());
+                }
+            }
+
+        });
+
+
+
     }
 }

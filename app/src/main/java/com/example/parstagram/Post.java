@@ -21,8 +21,8 @@ public class Post extends ParseObject {
         return getString(KEY_DESCRIPTION);
     }
 
-    public void setUser(){
-        put(KEY_USER, ParseUser.getCurrentUser());
+    public void setUser(ParseUser user){
+        put(KEY_USER, user);
     }
 
     public ParseUser getUser(){
