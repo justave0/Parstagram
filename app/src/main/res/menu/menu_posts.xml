@@ -6,14 +6,8 @@
         android:onClick="onLogoutAction"
         android:title="Logout"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/miCompose"
-        android:icon="@drawable/instagram_new_post_filled_24"
-        android:onClick="onPostAction"
-        android:title="Compose"
-        app:showAsAction="ifRoom">
 
-    </item>
+
 
 
 </menu>

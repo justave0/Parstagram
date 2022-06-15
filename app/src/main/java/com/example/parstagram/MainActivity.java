@@ -2,7 +2,11 @@ package com.example.parstagram;
 
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -40,8 +45,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // Lookup the recyclerview in activity layout
 
-
+        final FragmentManager fragmentManager = getSupportFragmentManager();
         RecyclerView rvFeed = (RecyclerView) findViewById(R.id.rvFeed);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        //fragment
+        final Fragment feed_fragment = new FeedFragment();
+        final Fragment create_fragment = new CreateFragment();
 
         // Create adapter passing in the sample user data
         adapter = new PostAdapter(this, mPosts);
@@ -55,7 +65,29 @@ public class MainActivity extends AppCompatActivity {
         user = ParseUser.getCurrentUser();
         queryPosts();
 
-        //Logout Button onClick
+        //Fragment Manager
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment;
+                switch (item.getItemId()) {
+                    case R.id.action_feed:
+                        fragment = feed_fragment;
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.flFeed, fragment);
+                        ft.commit();
+                    case R.id.action_create:
+                        // do something here
+                        fragment = create_fragment;
+                        break;
+                    default:
+                        fragment = feed_fragment;
+                }
+                fragmentManager.beginTransaction().replace(R.id.rlContainer, fragment).commit();
+                return true;
+            }
+        });
+        bottomNavigationView.setSelectedItemId(R.id.action_feed);
 
     }
 
