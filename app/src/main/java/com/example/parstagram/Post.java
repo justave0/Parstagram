@@ -5,7 +5,8 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-import org.parceler.Parcel;
+import java.util.ArrayList;
+import java.util.List;
 
 //@Parcel
 @ParseClassName("Post")
@@ -14,6 +15,8 @@ public class Post extends ParseObject {
     public static final String KEY_IMAGE = "image";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_USER = "user";
+    public static final String KEY_LIKES = "likes";
+    public static final String KEY_LIKEDBY = "likedBy";
 
     public Post (){}
 
@@ -40,5 +43,25 @@ public class Post extends ParseObject {
 
     public void setImage(ParseFile parseFile) {
         put(KEY_IMAGE, parseFile);
+    }
+
+    public void setLikes(int likes){
+        put(KEY_LIKES, likes);
+    }
+
+    public int getLikes() {
+        return getInt(KEY_LIKES);
+    }
+
+    public void setLikedBy(List<String> users) {
+        put(KEY_LIKEDBY, users);
+    }
+
+    public List<String> getLikedBy(){
+       List<String> likedBy = getList(KEY_LIKEDBY);
+       if(likedBy == null){
+           likedBy = new ArrayList<>();
+       }
+       return likedBy;
     }
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -17,10 +18,13 @@ import androidx.fragment.app.FragmentActivity;
 import com.bumptech.glide.Glide;
 import com.example.parstagram.Post;
 import com.example.parstagram.R;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
 import java.util.Date;
+import java.util.List;
 
 public class DetailFragment extends Fragment {
     FragmentActivity listener;
@@ -29,6 +33,8 @@ public class DetailFragment extends Fragment {
     TextView tvDetailDescription;
     ImageView ivDetailImage;
     private Post mPost;
+    ImageView ivDetailLike;
+    TextView tvDetailLikes;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -67,20 +73,108 @@ public class DetailFragment extends Fragment {
         tvDetailUsername = view.findViewById(R.id.tvDetailUsername);
         tvDetailTimestamp = view.findViewById(R.id.tvDetailTimestamp);
         ivDetailImage = view.findViewById(R.id.ivDetailImage);
+        ivDetailLike = view.findViewById(R.id.ivDetailLike);
+        tvDetailLikes = view.findViewById(R.id.tvDetailLikes);
 
         //Values for views
         tvDetailDescription.setText(mPost.getDescription());
         tvDetailUsername.setText(mPost.getUser().getUsername());
         tvDetailTimestamp.setText(calculateTimeAgo(mPost.getCreatedAt()));
+        tvDetailLikes.setText(mPost.getLikes() + " Likes");
+        //check if post is liked and update image accordingly
+
         if (mPost.getImage() != null){
             ivDetailImage.setVisibility(View.VISIBLE);
-            Glide.with(getContext()).load(mPost.getImage().getUrl()).into(ivDetailImage);
+            Glide.with(getContext()).load(mPost.getImage().getUrl()).override(1250).into(ivDetailImage);
         }
         else{
             ivDetailImage.setVisibility(View.INVISIBLE);
         }
 
+        ivDetailLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    if (checkLikedPost()){
+                        //remove like
+                        removeLike();
+                        Glide.with(getContext()).load(R.drawable.ufi_heart).into(ivDetailLike);
+                    }
+                    else{
+                        //add like
+                        addLike();
+                        Glide.with(getContext()).load(R.drawable.ufi_heart_active).into(ivDetailLike);
+                    }
+                }
+            }
+        );
 
+
+
+    }
+
+    private void addLike() {
+        //UPDATE like counter
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+
+        // Retrieve the object by id
+        query.getInBackground(mPost.getObjectId(), (object, e) -> {
+            if (e == null) {
+                // Update the number of likes
+                mPost.setLikes(mPost.getLikes()+1);
+                object.setLikes(mPost.getLikes());
+                // Update the users
+                ParseUser user = ParseUser.getCurrentUser();
+                List <String> likedBy = mPost.getLikedBy();
+                mPost.getLikedBy().add(0,user.getObjectId());
+                object.setLikedBy(mPost.getLikedBy());
+                // All other fields will remain the same
+                object.saveInBackground();
+                tvDetailLikes.setText(mPost.getLikes() + " Likes");
+
+
+            } else {
+                // something went wrong
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void removeLike() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+
+        // Retrieve the object by id
+        query.getInBackground(mPost.getObjectId(), (object, e) -> {
+            if (e == null) {
+                // Update the number of likes
+                mPost.setLikes(mPost.getLikes()-1);
+                object.setLikes(mPost.getLikes());
+                // Update the users
+                ParseUser user = ParseUser.getCurrentUser();
+                List <String> likedBy = mPost.getLikedBy();
+                mPost.getLikedBy().remove(user.getObjectId());
+                object.setLikedBy(mPost.getLikedBy());
+                // All other fields will remain the same
+                object.saveInBackground();
+                tvDetailLikes.setText(mPost.getLikes() + " Likes");
+
+            } else {
+                // something went wrong
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean checkLikedPost() {
+
+        if (mPost.getLikedBy().contains(ParseUser.getCurrentUser().getObjectId())){
+            Glide.with(getContext()).load(R.drawable.ufi_heart_active).into(ivDetailLike);
+            return true;
+        }
+        else{
+            Glide.with(getContext()).load(R.drawable.ufi_heart).into(ivDetailLike);
+            return false;
+        }
 
     }
 

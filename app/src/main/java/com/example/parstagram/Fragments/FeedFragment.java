@@ -32,6 +32,7 @@ public class FeedFragment extends Fragment {
     private ArrayList<Post> mPosts = new ArrayList<>();
     private SwipeRefreshLayout swipeContainer;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private Boolean pause = false;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -67,11 +68,18 @@ public class FeedFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //checks if the fragment was paused
+        //if not previously paused then recreate entire fragment
+        //if just paused then don't recreate fragment
+
         RecyclerView rvFeed = (RecyclerView) view.findViewById(R.id.rvFeed);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rvFeed.setAdapter(adapter);
         rvFeed.setLayoutManager(linearLayoutManager);
-        queryPosts();
+        if(!pause){
+            queryPosts();
+        }
         //swipe refresh
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -107,7 +115,15 @@ public class FeedFragment extends Fragment {
         };
         // Adds the scroll listener to RecyclerView
         rvFeed.addOnScrollListener(scrollListener);
+        //sets pause to false
+        pause = false;
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        pause = true;
+    }
+
 
     // This method is called when the fragment is no longer connected to the Activity
     // Any references saved in onAttach should be nulled out here to prevent memory leaks.
@@ -116,7 +132,7 @@ public class FeedFragment extends Fragment {
         super.onDetach();
         this.listener = null;
         adapter.clear();
-
+        pause = false;
     }
 
     // This method is called after the parent Activity's onCreate() method has completed.

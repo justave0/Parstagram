@@ -38,7 +38,10 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CreateFragment extends Fragment {
     PostAdapter adapter;
@@ -183,6 +186,9 @@ public class CreateFragment extends Fragment {
             post.setUser(user);
             post.setDescription(etDescription.getText().toString());
             post.setImage(new ParseFile(photoFile));
+            post.setLikes(0);
+            List<String> dummy = new ArrayList<>();
+            post.setLikedBy(dummy);
             post.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
