@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.parstagram.Post;
 import com.example.parstagram.PostAdapter;
@@ -27,7 +28,8 @@ public class FeedFragment extends Fragment {
     PostAdapter adapter;
     FragmentActivity listener;
     Context context;
-    private ArrayList<Post> posts = new ArrayList<>();
+    private ArrayList<Post> mPosts = new ArrayList<>();
+    private SwipeRefreshLayout swipeContainer;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -47,7 +49,7 @@ public class FeedFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new PostAdapter(getActivity(), posts);
+        adapter = new PostAdapter(getActivity(), mPosts);
     }
 
     // The onCreateView method is called when Fragment should create its View object hierarchy,
@@ -67,6 +69,29 @@ public class FeedFragment extends Fragment {
         rvFeed.setAdapter(adapter);
         rvFeed.setLayoutManager(new LinearLayoutManager(context));
         queryPosts();
+        //swipe refresh
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                queryPosts();
+                adapter.clear();
+                // ...the data has come back, add new items to your adapter...
+                adapter.addAll(mPosts);
+                // Now we call setRefreshing(false) to signal refresh has finished
+                swipeContainer.setRefreshing(false);
+
+            }
+
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -87,8 +112,8 @@ public class FeedFragment extends Fragment {
 
     //Updates the adapter
     public void notifyAdapter (ArrayList<Post> post){
-        posts = post;
-        adapter.updateAdapter(posts);
+        mPosts = post;
+        adapter.updateAdapter(mPosts);
     }
 
     public void queryPosts(){
@@ -97,6 +122,7 @@ public class FeedFragment extends Fragment {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
         query.addDescendingOrder("createdAt");
+        query.setLimit(20);
         //Log.i(TAG, query.toString());
         // Specify the object id
         query.findInBackground(new FindCallback<Post>() {
@@ -104,8 +130,8 @@ public class FeedFragment extends Fragment {
             public void done(List<Post> objects, com.parse.ParseException e) {
                 if (e == null) {
                     // Access the array of results here
-                    posts.addAll(objects);
-                    notifyAdapter(posts);
+                    mPosts.addAll(objects);
+                    notifyAdapter(mPosts);
                     //Log.i(TAG, mPosts.toString());
                 } else {
                     Log.e("item", "Error: " + e.getMessage());

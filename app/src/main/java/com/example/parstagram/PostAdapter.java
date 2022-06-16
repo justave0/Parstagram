@@ -2,6 +2,7 @@ package com.example.parstagram;
 
 import android.content.Context;
 import android.media.Image;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.parstagram.Fragments.DetailFragment;
 import com.parse.ParseUser;
 import com.parse.ui.widget.ParseImageView;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +73,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         public TextView tvDescription;
         public TextView tvUsername;
         public ImageView ivPostImage;
+        public ConstraintLayout clPost;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -74,26 +82,61 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvUsername = itemView.findViewById(R.id.tvUsername);
             ivPostImage = itemView.findViewById(R.id.ivPostImage);
+            clPost = itemView.findViewById(R.id.clPost);
 
         }
 
         public void bind(Post post) {
             tvDescription.setText(post.getDescription());
-            //ParseUser user = post.getUser();
-            //String name = post.getUser().getUsername();
-            //Log.i(TAG,name );
             tvUsername.setText(post.getUser().getUsername());
-
-
             //Parse Image View Methods
             if (post.getImage() != null) {
+                ivPostImage.setVisibility(View.VISIBLE);
                 Glide.with(context).load(post.getImage().getUrl()).into(ivPostImage);
             }
+            else{
+                ivPostImage.setVisibility(View.INVISIBLE);
+            }
+            clPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Activity for adapter
+                    AppCompatActivity activity = (AppCompatActivity) itemView.getContext();
+                    //Fragment Transaction (idk)
+                    FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                    //Create a new fragment
+                    DetailFragment detailFragment = new DetailFragment();
+                    //Create a new bundle
+                    Bundle args = new Bundle();
+                    //Put arguments in the bundle
+                    args.putParcelable("post", Parcels.wrap(post));
+                    //send bundle to the fragment
+                    detailFragment.setArguments(args);
+                    //replace the fragment
+                    ft.replace(R.id.flMain, detailFragment);
+                    //Commit!
+                    ft.commit();
+                }
+            });
+
         }
+
+
 
     }
     public void updateAdapter(ArrayList<Post> mDataList) {
         this.mPosts = mDataList;
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        mPosts.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<Post> list) {
+        mPosts.addAll(list);
         notifyDataSetChanged();
     }
 }
