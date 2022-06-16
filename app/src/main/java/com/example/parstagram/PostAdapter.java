@@ -31,6 +31,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     Context context;
     private List<Post> mPosts;
     private String TAG = "PostAdapter";
+    public DetailFragment detailFragment;
 
 
 
@@ -93,37 +94,38 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             if (post.getImage() != null) {
                 ivPostImage.setVisibility(View.VISIBLE);
                 Glide.with(context).load(post.getImage().getUrl()).into(ivPostImage);
+                ivPostImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Activity for adapter
+                        AppCompatActivity activity = (AppCompatActivity) itemView.getContext();
+                        //Fragment Transaction (idk)
+                        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                        //Create a new fragment
+                        DetailFragment detailFragment = new DetailFragment();
+                        //Create a new bundle
+                        Bundle args = new Bundle();
+                        //Put arguments in the bundle
+                        args.putParcelable("post", Parcels.wrap(post));
+                        //send bundle to the fragment
+                        detailFragment.setArguments(args);
+                        //replace the fragment
+                        ft.replace(R.id.flMain, detailFragment);
+                        //add to backstack
+                        ft.addToBackStack("FeedFragment");
+                        //Commit!
+                        ft.commit();
+                    }
+                });
             }
             else{
                 ivPostImage.setVisibility(View.INVISIBLE);
             }
-            clPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Activity for adapter
-                    AppCompatActivity activity = (AppCompatActivity) itemView.getContext();
-                    //Fragment Transaction (idk)
-                    FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                    //Create a new fragment
-                    DetailFragment detailFragment = new DetailFragment();
-                    //Create a new bundle
-                    Bundle args = new Bundle();
-                    //Put arguments in the bundle
-                    args.putParcelable("post", Parcels.wrap(post));
-                    //send bundle to the fragment
-                    detailFragment.setArguments(args);
-                    //replace the fragment
-                    ft.replace(R.id.flMain, detailFragment);
-                    //Commit!
-                    ft.commit();
-                }
-            });
 
         }
-
-
-
     }
+
+
     public void updateAdapter(ArrayList<Post> mDataList) {
         this.mPosts = mDataList;
         notifyDataSetChanged();

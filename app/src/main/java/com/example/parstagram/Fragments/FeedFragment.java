@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.parstagram.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.Post;
 import com.example.parstagram.PostAdapter;
 import com.example.parstagram.R;
@@ -30,6 +31,7 @@ public class FeedFragment extends Fragment {
     Context context;
     private ArrayList<Post> mPosts = new ArrayList<>();
     private SwipeRefreshLayout swipeContainer;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -65,9 +67,11 @@ public class FeedFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         RecyclerView rvFeed = (RecyclerView) view.findViewById(R.id.rvFeed);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rvFeed.setAdapter(adapter);
-        rvFeed.setLayoutManager(new LinearLayoutManager(context));
+        rvFeed.setLayoutManager(linearLayoutManager);
         queryPosts();
         //swipe refresh
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
@@ -77,8 +81,8 @@ public class FeedFragment extends Fragment {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                queryPosts();
                 adapter.clear();
+                queryPosts();
                 // ...the data has come back, add new items to your adapter...
                 adapter.addAll(mPosts);
                 // Now we call setRefreshing(false) to signal refresh has finished
@@ -92,6 +96,19 @@ public class FeedFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
+        // Endless Scrolling
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                queryMorePosts();
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvFeed.addOnScrollListener(scrollListener);
+
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -100,6 +117,9 @@ public class FeedFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         this.listener = null;
+        // clear feed if going to different fragment
+        adapter.clear();
+
     }
 
     // This method is called after the parent Activity's onCreate() method has completed.
@@ -139,8 +159,30 @@ public class FeedFragment extends Fragment {
             }
 
         });
+    }
 
+    //Endless Scrolling helper function
+    public void queryMorePosts(){
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.include(Post.KEY_USER);
+        query.addDescendingOrder("createdAt");
+        query.whereLessThan("createdAt", mPosts.get(mPosts.size()-1).getCreatedAt());
+        query.setLimit(20);
+        //Log.i(TAG, query.toString());
+        // Specify the object id
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, com.parse.ParseException e) {
+                if (e == null) {
+                    // Access the array of results here
+                    mPosts.addAll(objects);
+                    notifyAdapter(mPosts);
+                    //Log.i(TAG, mPosts.toString());
+                } else {
+                    Log.e("item", "Error: " + e.getMessage());
+                }
+            }
 
-
+        });
     }
 }
