@@ -110,7 +110,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                         //send bundle to the fragment
                         detailFragment.setArguments(args);
                         //replace the fragment
-                        ft.replace(R.id.flMain, detailFragment);
+                        ft.show(detailFragment);
+                        //ft.replace(R.id.flMain, detailFragment);
                         //add to backstack
                         ft.addToBackStack("FeedFragment");
                         //Commit!

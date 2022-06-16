@@ -67,7 +67,6 @@ public class FeedFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         RecyclerView rvFeed = (RecyclerView) view.findViewById(R.id.rvFeed);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rvFeed.setAdapter(adapter);
@@ -108,7 +107,6 @@ public class FeedFragment extends Fragment {
         };
         // Adds the scroll listener to RecyclerView
         rvFeed.addOnScrollListener(scrollListener);
-
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -117,7 +115,6 @@ public class FeedFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         this.listener = null;
-        // clear feed if going to different fragment
         adapter.clear();
 
     }
