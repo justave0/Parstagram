@@ -28,7 +28,7 @@ import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
-    Context context;
+    private final Context context;
     private List<Post> mPosts;
     private String TAG = "PostAdapter";
     public DetailFragment detailFragment;
@@ -45,10 +45,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-
         // Inflate the custom layout
         View contactView = inflater.inflate(R.layout.item_post, parent, false);
-
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(contactView);
         return viewHolder;
@@ -75,6 +73,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         public TextView tvUsername;
         public ImageView ivPostImage;
         public ConstraintLayout clPost;
+        public ImageView ivProfilePic;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -84,12 +83,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             tvUsername = itemView.findViewById(R.id.tvUsername);
             ivPostImage = itemView.findViewById(R.id.ivPostImage);
             clPost = itemView.findViewById(R.id.clPost);
+            ivProfilePic = itemView.findViewById(R.id.ivProfilePic);
 
         }
 
         public void bind(Post post) {
             tvDescription.setText(post.getDescription());
             tvUsername.setText(post.getUser().getUsername());
+            Glide.with(context).load(post.getUser().getParseFile("profilePic").getUrl()).circleCrop().into(ivProfilePic);
             //Parse Image View Methods
             if (post.getImage() != null) {
                 ivPostImage.setVisibility(View.VISIBLE);

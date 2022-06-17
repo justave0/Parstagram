@@ -124,7 +124,6 @@ public class FeedFragment extends Fragment {
         pause = true;
     }
 
-
     // This method is called when the fragment is no longer connected to the Activity
     // Any references saved in onAttach should be nulled out here to prevent memory leaks.
     @Override

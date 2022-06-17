@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.parstagram.Fragments.CreateFragment;
 import com.example.parstagram.Fragments.FeedFragment;
+import com.example.parstagram.Fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.parse.FindCallback;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     Fragment feed_fragment;
     Fragment create_fragment;
+    Fragment profile_fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         //fragment
         feed_fragment = new FeedFragment();
         create_fragment = new CreateFragment();
+        profile_fragment = new ProfileFragment();
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.flMain, feed_fragment, FeedFragment.class.getSimpleName());
@@ -76,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_feed:
                         fragment = feed_fragment;
                         tag = FeedFragment.class.getSimpleName();
+                        break;
+
+                    case R.id.action_profile:
+                        fragment = profile_fragment;
+                        tag = ProfileFragment.class.getSimpleName();
                         break;
 
                     default:

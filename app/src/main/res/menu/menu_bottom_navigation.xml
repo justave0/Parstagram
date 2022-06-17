@@ -4,14 +4,21 @@
     <item
         android:id="@+id/action_feed"
         android:enabled="true"
-        android:icon="@drawable/instagram_home_outline_24"
-        android:title="feed"
+        android:icon="@drawable/selector_feed_icon"
+        android:title="Feed"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_create"
         android:enabled="true"
-        android:icon="@drawable/instagram_new_post_outline_24"
-        android:title="create"
+        android:icon="@drawable/selector_create_button"
+        android:title="Create"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_profile"
+        android:enabled="true"
+        android:icon="@drawable/selector_profile_button"
+        android:title="Profile"
         app:showAsAction="ifRoom" />
 
 
