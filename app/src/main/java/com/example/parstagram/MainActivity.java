@@ -37,10 +37,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    Button btLogout;
     ParseUser user;
     private ArrayList<Post> mPosts = new ArrayList<>();
-    PostAdapter adapter;
 
     Fragment feed_fragment;
     Fragment create_fragment;

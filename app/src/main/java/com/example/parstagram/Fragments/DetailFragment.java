@@ -82,7 +82,7 @@ public class DetailFragment extends Fragment {
         tvDetailTimestamp.setText(calculateTimeAgo(mPost.getCreatedAt()));
         tvDetailLikes.setText(mPost.getLikes() + " Likes");
         //check if post is liked and update image accordingly
-
+        checkLikedPost();
         if (mPost.getImage() != null){
             ivDetailImage.setVisibility(View.VISIBLE);
             Glide.with(getContext()).load(mPost.getImage().getUrl()).override(1250).into(ivDetailImage);

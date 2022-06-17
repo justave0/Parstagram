@@ -69,9 +69,6 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(View itemView, Bundle savedInstanceState) {
         super.onViewCreated(itemView, savedInstanceState);
         view = itemView;
-        //if (currUser == null) {
-         //   queryUserPosts(ParseUser.getCurrentUser());
-        //}
 
         rvProfile = (RecyclerView) view.findViewById(R.id.rvProfile);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
@@ -86,7 +83,6 @@ public class ProfileFragment extends Fragment {
         query.include(Post.KEY_USER);
         query.whereEqualTo(Post.KEY_USER, user.getObjectId());
         query.addDescendingOrder("createdAt");
-        //Log.i(TAG, query.toString());
         // Specify the object id
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -94,7 +90,6 @@ public class ProfileFragment extends Fragment {
                 if (e == null) {
                     // Access the array of results here
                     mUserPosts.addAll(objects);
-                    //Log.i(TAG, mPosts.toString());
 
                 } else {
                     Log.e("item", "Error: " + e.getMessage());

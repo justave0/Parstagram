@@ -150,12 +150,10 @@ public class FeedFragment extends Fragment {
 
     public void queryPosts(){
         // Specify which class to query
-        //Post post = new Post();
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
         query.addDescendingOrder("createdAt");
         query.setLimit(20);
-        //Log.i(TAG, query.toString());
         // Specify the object id
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -164,7 +162,6 @@ public class FeedFragment extends Fragment {
                     // Access the array of results here
                     mPosts.addAll(objects);
                     notifyAdapter(mPosts);
-                    //Log.i(TAG, mPosts.toString());
                 } else {
                     Log.e("item", "Error: " + e.getMessage());
                 }
@@ -180,7 +177,6 @@ public class FeedFragment extends Fragment {
         query.addDescendingOrder("createdAt");
         query.whereLessThan("createdAt", mPosts.get(mPosts.size()-1).getCreatedAt());
         query.setLimit(20);
-        //Log.i(TAG, query.toString());
         // Specify the object id
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -189,7 +185,6 @@ public class FeedFragment extends Fragment {
                     // Access the array of results here
                     mPosts.addAll(objects);
                     notifyAdapter(mPosts);
-                    //Log.i(TAG, mPosts.toString());
                 } else {
                     Log.e("item", "Error: " + e.getMessage());
                 }

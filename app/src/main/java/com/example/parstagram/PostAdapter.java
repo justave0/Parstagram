@@ -31,7 +31,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     private final Context context;
     private List<Post> mPosts;
     private String TAG = "PostAdapter";
-    public DetailFragment detailFragment;
 
 
 
